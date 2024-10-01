@@ -1,1 +1,51 @@
-# Your Solution
+version: '3.8'
+
+services:
+  book_catalog:
+    build:
+      context: ./book_catalog  # Path to the book_catalog directory
+      dockerfile: Dockerfile  # Use the Dockerfile in the book_catalog directory
+    container_name: book_catalog
+    ports:
+      - "8000:8000"  # Map the container's port 8000 to your host's port 8000
+    environment:
+      - ENV=production
+    depends_on:
+      - postgres_db
+    networks:
+      - app-network
+
+  inventory_management:
+    build:
+      context: ./inventory_management  # Path to the inventory_management directory
+      dockerfile: Dockerfile  # Use the Dockerfile in the inventory_management directory
+    container_name: inventory_management
+    ports:
+      - "8001:8001"  # Map the container's port 8001 to your host's port 8001
+    environment:
+      - ENV=production
+    depends_on:
+      - postgres_db
+    networks:
+      - app-network
+
+  postgres_db:
+    image: postgres:13
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: sevenpointtwo_user
+      POSTGRES_PASSWORD: mfFYxjpW6gP1FG2CXw7yaT9FxY4uyvLQ
+      POSTGRES_DB: postgresql://sevenpointtwo_user:mfFYxjpW6gP1FG2CXw7yaT9FxY4uyvLQ@dpg-crt8hmtumphs73fke9f0-a.oregon-postgres.render.com/sevenpointtwo
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
